@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Resume Analyzer | Sign Up</title>
+    <link rel="stylesheet" href="./css/style.css" />
+  </head>
+  <body data-page="signup">
+    <main class="container auth-container">
+      <section class="card">
+        <header class="card-header">
+          <h1 class="title">Create account</h1>
+          <p class="subtitle">Sign up to analyze resumes instantly</p>
+        </header>
+        <form id="signup-form" class="form">
+          <label class="label">
+            Username
+            <input id="signup-username" class="input" type="text" autocomplete="username" required />
+          </label>
+          <label class="label">
+            Password
+            <input id="signup-password" class="input" type="password" autocomplete="new-password" required />
+          </label>
+          <button class="button button-primary" type="submit">Create account</button>
+          <p class="form-footer">
+            Already have an account?
+            <a class="link" href="./index.html">Log in</a>
+          </p>
+          <div id="signup-feedback" class="feedback" role="status" aria-live="polite"></div>
+        </form>
+      </section>
+    </main>
+    <script type="module" src="./js/main.js"></script>
+  </body>
+</html>

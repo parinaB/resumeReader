@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Resume Analyzer | Dashboard</title>
+    <link rel="stylesheet" href="./css/style.css" />
+  </head>
+  <body data-page="dashboard">
+    <header class="app-header">
+      <div>
+        <h1 class="title">Resume Analyzer</h1>
+        <p class="subtitle">AI-powered resume scoring and feedback</p>
+      </div>
+      <div class="header-actions">
+        <span id="current-user" class="user-chip"></span>
+        <button id="logout-button" class="button button-secondary" type="button">Log out</button>
+      </div>
+    </header>
+    <main class="container dashboard-grid">
+      <section class="card">
+        <header class="card-header">
+          <h2 class="card-title">Resume input</h2>
+          <p class="card-subtitle">Upload a PDF or paste the resume text</p>
+        </header>
+        <div class="form">
+          <label class="label">
+            Upload PDF
+            <input id="resume-file" class="input" type="file" accept="application/pdf" />
+          </label>
+          <div id="file-feedback" class="feedback" role="status" aria-live="polite"></div>
+          <label class="label">
+            Or paste resume text
+            <textarea id="resume-text" class="textarea" rows="10" placeholder="Paste resume content here"></textarea>
+          </label>
+          <button id="analyze-button" class="button button-primary" type="button">Analyze resume</button>
+          <div id="analysis-feedback" class="feedback" role="status" aria-live="polite"></div>
+        </div>
+      </section>
+      <section class="card">
+        <header class="card-header">
+          <h2 class="card-title">Analysis</h2>
+          <p class="card-subtitle">Score, strengths, and improvements</p>
+        </header>
+        <div id="analysis-loading" class="loading hidden">Analyzing...</div>
+        
+        <div id="analysis-results" class="analysis hidden">
+          <div class="score-card">
+            <span class="score-label">Score</span>
+            <div id="score-spinner" class="score-spinner hidden" aria-hidden="true"></div>
+            <span id="analysis-score" class="score-value">--</span>
+          </div>
+          <div class="analysis-section">
+            <h3 class="section-title">Strengths</h3>
+            <ul id="analysis-strengths" class="list"></ul>
+          </div>
+          <div class="analysis-section">
+            <h3 class="section-title">Weaknesses</h3>
+            <ul id="analysis-weaknesses" class="list"></ul>
+          </div>
+          <div class="analysis-section">
+            <h3 class="section-title">Missing sections</h3>
+            <ul id="analysis-missing" class="list"></ul>
+          </div>
+          <div class="analysis-section">
+            <h3 class="section-title">Improvements</h3>
+            <ul id="analysis-improvements" class="list"></ul>
+          </div>
+        </div>
+      </section>
+    </main>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.0.379/pdf.min.js" crossorigin="anonymous"></script>
+    <script type="module" src="./js/main.js"></script>
+  </body>
+</html>
