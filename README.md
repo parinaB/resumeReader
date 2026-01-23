@@ -80,15 +80,15 @@ This is currently frontend-only.
 
 ## Tech Used
 
-HTML5 + CSS3 + Vanilla JavaScript
-FileReader API (text extraction)
-Fetch API (LLM calls)
-LocalStorage (simple auth)
+- HTML5 + CSS3 + Vanilla JavaScript
+- FileReader API (text extraction)
+- Fetch API (LLM calls)
+- LocalStorage (simple auth)
 
 ## Future Plans / Ideas
 
-Deploy live version (Vercel / Netlify / GitHub Pages)
-Add backend proxy to hide API keys properly
-Rate limiting & daily quota
-Export analysis as PDF
-Add more providers (Grok, Gemini, Claude, etc.)
+- Deploy live version (Vercel / Netlify / GitHub Pages)
+- Add backend proxy to hide API keys properly
+- Rate limiting & daily quota
+- Export analysis as PDF
+- Add more providers (Grok, Gemini, Claude, etc.)
