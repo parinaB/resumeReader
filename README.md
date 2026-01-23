@@ -14,10 +14,6 @@ score (0–100), strengths, weaknesses, suggested improvements, and missing sect
 - Structured JSON output from multiple LLMs
 - Easy to switch AI providers in `js/config.js`
 
-## Live Demo / Portfolio Goal
-
-(Once deployed — add your GitHub Pages / Vercel link here)  
-Example: https://YOUR_USERNAME.github.io/resumeReader/
 
 ## How to Run Locally (2 minutes)
 
@@ -58,14 +54,14 @@ Example: https://YOUR_USERNAME.github.io/resumeReader/
    Click "Analyze"
 
 
-Important Notes
+## Important Notes
 
 This is currently frontend-only.
   Direct API calls from browser → may hit CORS errors or require the "dangerous browser header" for Anthropic-style APIs.
   Never commit real API keys — always use placeholders in the repo.
   js/server.js (if present) is a backend proxy example → for production use (hides keys).
 
-Folder Structure 
+## Folder Structure 
  resumeReader/
 ├── index.html          # Login page
 ├── signup.html
@@ -82,14 +78,14 @@ Folder Structure
 └── README.md
 
 
-Tech Used
+## Tech Used
 
 HTML5 + CSS3 + Vanilla JavaScript
 FileReader API (text extraction)
 Fetch API (LLM calls)
 LocalStorage (simple auth)
 
-Future Plans / Ideas
+## Future Plans / Ideas
 
 Deploy live version (Vercel / Netlify / GitHub Pages)
 Add backend proxy to hide API keys properly
