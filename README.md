@@ -1,44 +1,98 @@
-# Resume Analyzer (Frontend Only)
+# Resume Reader
 
-## Project Overview
-Resume Analyzer is a frontend-only web app that lets users sign up, upload or paste resumes, and receive AI-based scoring with improvement suggestions. It uses browser storage for authentication and client-side PDF parsing for text extraction.
+A simple web application that lets you upload or paste your resume and get instant AI-powered feedback:  
+score (0–100), strengths, weaknesses, suggested improvements, and missing sections.
+
+**Currently supports:** OpenAI, Cohere, AI21 (you pick which provider to use)
 
 ## Features
-- Frontend-only signup and login with SHA-256 password hashing
-- LocalStorage user persistence and session handling
-- PDF resume upload with client-side text extraction
-- Manual resume text input
-- AI analysis with score, strengths, weaknesses, missing sections, and improvements
-- Loading, success, and error feedback states
 
-## Tech Stack
-- HTML, CSS, and Vanilla JavaScript (ES modules)
-- Web Crypto API for password hashing
-- PDF.js for PDF text extraction
+- Upload PDF / DOCX / TXT resume or paste plain text
+- Automatic text extraction from files
+- Clean dashboard UI
+- Basic login / signup (stored in localStorage)
+- Structured JSON output from multiple LLMs
+- Easy to switch AI providers in `js/config.js`
 
-## Setup Instructions
-1. Clone the repository.
-2. Ensure you serve the files via a local web server (required for ES modules).
-3. Add your API key values to `.env`.
-4. Open `index.html` via the server and create a new account.
+## Live Demo / Portfolio Goal
 
-## Environment Variables
-Set the following in `.env`:
-```
-OPENAI_API_KEY=YOUR_OPENAI_API_KEY_HERE
-CLAUDE_API_KEY=YOUR_CLAUDE_API_KEY_HERE
-COHERE_API_KEY=YOUR_COHERE_API_KEY_HERE
-ANOTHER_AI_KEY=YOUR_NEW_AI_KEY_HERE
-PDF_API_KEY=YOUR_PDF_API_KEY_HERE
-```
+(Once deployed — add your GitHub Pages / Vercel link here)  
+Example: https://YOUR_USERNAME.github.io/resumeReader/
 
-## Security Notes
-- This project is frontend-only and stores hashed passwords in LocalStorage.
-- LocalStorage is not secure for production authentication; use a proper backend for real deployments.
-- API keys must never be hardcoded in source files.
+## How to Run Locally (2 minutes)
 
-## Future Improvements
-- Add job description matching
-- Export analysis to PDF
-- Add resume comparison and historical tracking
-- Add dark mode
+1. Clone the repository
+
+   ```bash
+   git clone https://github.com/YOUR_USERNAME/resumeReader.git
+   cd resumeReader
+    ```
+
+2. Add your own API keys in js/config.jsOpen js/config.js and replace the placeholder strings with real keys:
+   openai: {
+     apiKey: "sk-YourRealOpenAIKeyHere123...",   // ← paste your key
+      ...
+   },
+  cohere: {
+    apiKey: "YourCohereKeyHere...",             // ← paste your key
+    ...
+  },
+  ai21: {
+    apiKey: "YourAI21KeyHere...",               // ← paste your key
+    ...
+  }
+  Get free/trial keys from:
+  OpenAI: https://platform.openai.com/account/api-keys
+  Cohere: https://dashboard.cohere.com/api-keys
+  AI21:   https://studio.ai21.com/account/api-keys
+
+3. Open the project
+   Double-click index.html (simple way)
+   Recommended: Use VS Code → right-click → "Open with Live Server"
+   Or run: python -m http.server (or any static server)
+
+4. Flow:
+   Sign up / log in
+   Go to dashboard
+   Upload resume or paste text
+   Click "Analyze"
+
+
+Important Notes
+
+This is currently frontend-only.
+  Direct API calls from browser → may hit CORS errors or require the "dangerous browser header" for Anthropic-style APIs.
+  Never commit real API keys — always use placeholders in the repo.
+  js/server.js (if present) is a backend proxy example → for production use (hides keys).
+
+Folder Structure 
+ resumeReader/
+├── index.html          # Login page
+├── signup.html
+├── dashboard.html      # Upload + analysis page
+├── css/                # styles
+├── js/
+│   ├── ai.js           # LLM calls & parsing
+│   ├── auth.js         # login/signup
+│   ├── config.js       # ← EDIT THIS with your keys!
+│   ├── main.js         # app logic
+│   ├── resume.js       # file handling
+│   └── ui.js           # rendering
+├── .gitignore
+└── README.md
+
+
+Tech Used
+
+HTML5 + CSS3 + Vanilla JavaScript
+FileReader API (text extraction)
+Fetch API (LLM calls)
+LocalStorage (simple auth)
+
+Future Plans / Ideas
+
+Deploy live version (Vercel / Netlify / GitHub Pages)
+Add backend proxy to hide API keys properly
+Rate limiting & daily quota
+Export analysis as PDF
+Add more providers (Grok, Gemini, Claude, etc.)
