@@ -61,21 +61,29 @@ This is currently frontend-only.
   Never commit real API keys — always use placeholders in the repo.
   js/server.js (if present) is a backend proxy example → for production use (hides keys).
 
+## ScreenShots of working 
+  - Sample Resume1: <img width="1710" height="990" alt="Screenshot 2026-01-23 at 3 35 31 PM" src="https://github.com/user-attachments/assets/707978e0-56ce-435e-a901-6b69fabc799f" />
+  - Sample Resume2 : <img width="1710" height="989" alt="Screenshot 2026-01-23 at 3 36 42 PM" src="https://github.com/user-attachments/assets/e7b54df0-efc0-45a3-82a8-d680af0687eb" />
+
+
+  
+
 ## Folder Structure 
- resumeReader/
-├── index.html          # Login page
-├── signup.html
-├── dashboard.html      # Upload + analysis page
-├── css/                # styles
-├── js/
-│   ├── ai.js           # LLM calls & parsing
-│   ├── auth.js         # login/signup
-│   ├── config.js       # ← EDIT THIS with your keys!
-│   ├── main.js         # app logic
-│   ├── resume.js       # file handling
-│   └── ui.js           # rendering
-├── .gitignore
-└── README.md
+
+-  resumeReader/
+- ├── index.html          # Login page
+- ├── signup.html
+- ├── dashboard.html      # Upload + analysis page
+- ├── css/                # styles
+- ├── js/
+- │   ├── ai.js           # LLM calls & parsing
+- │   ├── auth.js         # login/signup
+- │   ├── config.js       # ← EDIT THIS with your keys!
+- │   ├── main.js         # app logic
+- │   ├── resume.js       # file handling
+- │   └── ui.js           # rendering
+- ├── .gitignore
+- └── README.md
 
 
 ## Tech Used
