@@ -1,5 +1,4 @@
-const PDF_WORKER_URL =
-  "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.0.379/pdf.worker.min.js";
+const PDF_WORKER_URL = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
 
 const ensurePdfWorker = () => {
   if (!window.pdfjsLib) {

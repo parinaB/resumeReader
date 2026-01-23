@@ -105,23 +105,29 @@ const initDashboard = () => {
   }
 
   if (analyzeButton) {
-    analyzeButton.addEventListener("click", async () => {
-      setError("analysis-feedback", "");
-      setLoading(true);
-      try {
-        const inputText = textInput.value.trim() || appState.resumeText;
-        const cleanedText = validateResumeText(inputText);
-        const analysis = await sendResumeToAI(cleanedText);
-        appState.analysis = analysis;
-        renderAnalysis(analysis);
-        setFeedback("analysis-feedback", "Analysis complete.", "success");
-      } catch (error) {
-        setError("analysis-feedback", error.message);
-      } finally {
-        setLoading(false);
-      }
-    });
-  }
+  analyzeButton.addEventListener("click", async () => {
+    setError("analysis-feedback", "");
+    setLoading(true);
+    try {
+      const inputText = textInput.value.trim() || appState.resumeText;
+      const cleanedText = validateResumeText(inputText);
+
+      // You can hardcode or add UI to select provider
+      // For now: use default from config
+      const analysis = await sendResumeToAI(cleanedText);  // ← no change needed, uses DEFAULT_PROVIDER
+
+      // Optional: to try a specific one → sendResumeToAI(cleanedText, 'cohere')
+
+      appState.analysis = analysis;
+      renderAnalysis(analysis);
+      setFeedback("analysis-feedback", `Analysis complete (via ${analysis.provider || 'provider'}).`, "success");
+    } catch (error) {
+      setError("analysis-feedback", error.message);
+    } finally {
+      setLoading(false);
+    }
+  });
+}
 
   if (logoutButton) {
     logoutButton.addEventListener("click", () => {

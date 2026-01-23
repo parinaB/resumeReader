@@ -1,128 +1,142 @@
-const env = window.__ENV || window.process?.env || {};
-const getEnvValue = (...keys) => keys.map((key) => env[key]).find(Boolean);
+// ai.js
+import { CONFIG, getProviderConfig, isConfigured } from './config.js';
 
-const aiAPIs = [
-  {
-    name: "OpenAI",
-    key: getEnvValue("OPENAI_API_KEY", "openai_api_key", "openai_API_KEY"),
-    endpoint: "OPENAI_ENDPOINT_HERE",
-  },
-  {
-    name: "Claude",
-    key: getEnvValue("CLAUDE_API_KEY", "claude_api_key", "claude_API_KEY"),
-    endpoint: "CLAUDE_ENDPOINT_HERE",
-  },
-  {
-    name: "Cohere",
-    key: getEnvValue("COHERE_API_KEY", "cohere_API_key", "cohere_ai_key", "cohere_AI_KEY"),
-    endpoint: "COHERE_ENDPOINT_HERE",
-  },
-  {
-    name: "Custom",
-    key: getEnvValue("ANOTHER_AI_KEY", "another_ai_key", "another_AI_KEY"),
-    endpoint: "ANOTHER_ENDPOINT_HERE",
-  },
-];
+const SYSTEM_PROMPT = `You are a professional resume analyzer. Analyze resumes and provide constructive feedback.
 
-const normalizeResponse = (data) => {
-  if (typeof data === "string") {
-    return JSON.parse(data);
+Respond ONLY with valid JSON in this exact format (no markdown, no explanation):
+{
+  "score": <number between 0-100>,
+  "strengths": ["strength1", "strength2", "strength3"],
+  "weaknesses": ["weakness1", "weakness2"],
+  "improvements": ["specific improvement1", "specific improvement2", "specific improvement3"],
+  "missingSections": ["section1", "section2"]
+}
+
+Be specific and actionable in your feedback.`;
+
+export const sendResumeToAI = async (resumeText, preferredProvider = null) => {
+  const providerName = preferredProvider || CONFIG.DEFAULT_PROVIDER;
+  const prov = getProviderConfig(providerName);
+
+  if (!prov) {
+    throw new Error(`Provider '${providerName}' not found in config`);
   }
-  return data;
-};
 
-const setPartialWarning = () => {
-  const feedback = document.getElementById("analysis-feedback");
-  if (!feedback) {
-    return;
+  if (!isConfigured(providerName)) {
+    throw new Error(
+      `API key for ${providerName.toUpperCase()} not configured properly. ` +
+      `Check config.js → providers.${providerName}.apiKey (must be valid string, no placeholders)`
+    );
   }
-  feedback.textContent = "Some AI services failed, partial analysis shown.";
-  feedback.dataset.type = "info";
-};
 
-export const parseAIResponse = (data) => {
-  const parsed = normalizeResponse(data);
-  if (!parsed || typeof parsed.score !== "number") {
-    throw new Error("AI response format is invalid.");
-  }
-  const requiredArrays = ["strengths", "weaknesses", "missingSections", "improvements"];
-  requiredArrays.forEach((key) => {
-    if (!Array.isArray(parsed[key])) {
-      throw new Error("AI response format is invalid.");
-    }
-  });
-  return parsed;
-};
-
-export const mergeAndDeduplicate = (resultsArray, key) => {
-  const seen = new Map();
-  resultsArray.forEach((result) => {
-    result[key].forEach((item) => {
-      const normalized = item.trim().toLowerCase();
-      if (!seen.has(normalized)) {
-        seen.set(normalized, item);
-      }
-    });
-  });
-  return Array.from(seen.values());
-};
-
-export const mergeResults = (resultsArray) => {
-  const total = resultsArray.reduce((sum, result) => sum + result.score, 0);
-  const score = Math.round(total / resultsArray.length);
-  return {
-    score,
-    strengths: mergeAndDeduplicate(resultsArray, "strengths"),
-    weaknesses: mergeAndDeduplicate(resultsArray, "weaknesses"),
-    improvements: mergeAndDeduplicate(resultsArray, "improvements"),
-    missingSections: mergeAndDeduplicate(resultsArray, "missingSections"),
-  };
-};
-
-export const sendToAPI = async (apiConfig, resumeText) => {
-  if (!apiConfig.key) {
-    return { name: apiConfig.name, ok: false, error: "Missing API key." };
-  }
-  if (!apiConfig.endpoint || apiConfig.endpoint.includes("ENDPOINT_HERE")) {
-    return { name: apiConfig.name, ok: false, error: "Missing API endpoint." };
-  }
   try {
-    const response = await fetch(apiConfig.endpoint, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${apiConfig.key}`,
-        ...apiConfig.headers,
-      },
-      body: JSON.stringify({ resumeText }),
+    // Standard OpenAI-compatible format (works for OpenAI + AI21)
+    // Cohere v2 also supports messages array now
+    const body = {
+      model: prov.model,
+      messages: [
+        { role: "system", content: SYSTEM_PROMPT },
+        { role: "user", content: `Analyze this resume:\n\n${resumeText}` },
+      ],
+      max_tokens: CONFIG.MAX_TOKENS,
+      temperature: 0.3,          // Low for structured JSON output
+      top_p: 0.9,                // Optional: helps consistency
+    };
+
+    const headers = {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${prov.apiKey}`,
+    };
+
+    // Provider-specific overrides (if any)
+    if (providerName === 'cohere') {
+      // Cohere v2 fully supports messages + system role (2025+)
+      // No need for preamble/message split anymore
+      // If older version needed: add 'preamble': SYSTEM_PROMPT and flatten messages
+      // But current docs recommend messages array
+    }
+    // AI21 uses OpenAI-compatible format → no change needed
+
+    const response = await fetch(prov.endpoint, {
+      method: 'POST',
+      headers,
+      body: JSON.stringify(body),
     });
+
     if (!response.ok) {
-      throw new Error(`AI API error (${response.status})`);
+      let errData = {};
+      try {
+        errData = await response.json();
+      } catch {}
+      const msg =
+        errData.error?.message ||
+        errData.message ||
+        `HTTP ${response.status} ${response.statusText}`;
+      
+      let fullError = `[${providerName.toUpperCase()}] ${msg}`;
+      if (response.status === 429) fullError += " (rate limit exceeded)";
+      if (response.status === 402 || (response.status === 400 && /credit|balance/i.test(msg))) {
+        fullError += " — low credits/balance; top up on provider dashboard";
+      }
+      throw new Error(fullError);
     }
+
     const data = await response.json();
-    return { name: apiConfig.name, ok: true, data: parseAIResponse(data) };
-  } catch (error) {
-    console.warn(`AI ${apiConfig.name} failed`, error);
-    return { name: apiConfig.name, ok: false, error: error.message };
-  }
-};
 
-export const sendResumeToAllAIs = async (resumeText) => {
-  const results = await Promise.all(aiAPIs.map((api) => sendToAPI(api, resumeText)));
-  const successful = results.filter((result) => result.ok).map((result) => result.data);
-  if (successful.length === 0) {
-    throw new Error("AI services unavailable.");
-  }
-  if (results.some((result) => !result.ok)) {
-    setTimeout(() => setPartialWarning(), 0);
-  }
-  return mergeResults(successful);
-};
+    // Unified response parsing (OpenAI-compatible + Cohere v2 adjustments)
+    let text = '';
 
-export const sendResumeToAI = async (resumeText) => {
-  try {
-    return await sendResumeToAllAIs(resumeText);
+    if (providerName === 'openai' || providerName === 'ai21') {
+      // Standard: choices[0].message.content
+      text = data.choices?.[0]?.message?.content || '';
+    } else if (providerName === 'cohere') {
+      // Cohere v2 chat: message.content is array → join text blocks
+      const contentBlocks = data.message?.content || [];
+      text = contentBlocks
+        .filter(block => block.type === 'text')
+        .map(block => block.text)
+        .join('\n');
+      // Fallback if older format
+      if (!text && data.text) text = data.text;
+    }
+
+    if (!text.trim()) {
+      throw new Error('No valid text content in AI response');
+    }
+
+    // Clean markdown/JSON fences
+    text = text.replace(/```json\s*/gi, '').replace(/```/g, '').trim();
+
+    let analysis;
+    try {
+      analysis = JSON.parse(text);
+    } catch (parseErr) {
+      console.error(`JSON parse failed for ${providerName}:`, text.substring(0, 200) + '...');
+      throw new Error(`AI returned invalid JSON format from ${providerName}`);
+    }
+
+    // Validate required structure
+    if (typeof analysis.score !== 'number') {
+      throw new Error('Invalid response: missing or invalid "score"');
+    }
+
+    const requiredArrays = ['strengths', 'weaknesses', 'improvements', 'missingSections'];
+    for (const key of requiredArrays) {
+      if (!Array.isArray(analysis[key])) {
+        throw new Error(`Invalid response: "${key}" must be an array`);
+      }
+    }
+
+    // Clamp score
+    analysis.score = Math.max(0, Math.min(100, Math.round(analysis.score)));
+
+    return {
+      ...analysis,
+      provider: providerName, // helpful for UI/debug
+    };
+
   } catch (error) {
-    throw new Error("Unable to analyze resume right now.");
+    console.error(`Analysis failed [${providerName}]:`, error);
+    throw error; // Let main.js display user-friendly message
   }
 };

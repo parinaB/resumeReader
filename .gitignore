@@ -1,4 +1,22 @@
+# Never commit real API keys or secrets
+config.js
 .env
-env.local.js
-node_modules
+*.env*
+*.env.local
+
+# Node.js / dependencies
+node_modules/
+package-lock.json
+npm-debug.log
+yarn-error.log
+
+# OS / editor junk
 .DS_Store
+Thumbs.db
+.vscode/
+*.swp
+*.swo
+
+# Temporary / build files (if any in future)
+dist/
+build/
