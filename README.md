@@ -66,24 +66,21 @@ This is currently frontend-only.
   - Sample Resume2 : <img width="1710" height="989" alt="Screenshot 2026-01-23 at 3 36 42 PM" src="https://github.com/user-attachments/assets/e7b54df0-efc0-45a3-82a8-d680af0687eb" />
 
 
-  
 
-## Folder Structure 
+## Folder Structure
 
--  resumeReader/
--     ├── index.html          # Login page
--     ├── signup.html
--     ├── dashboard.html      # Upload + analysis page
--     ├── css/                # styles
--     ├── js/
--        │   ├── ai.js           # LLM calls & parsing
--        │   ├── auth.js         # login/signup
--        │   ├── config.js       # ← EDIT THIS with your keys!
--        │   ├── main.js         # app logic
--        │   ├── resume.js       # file handling
--        │   └── ui.js           # rendering
--     ├── .gitignore
--     └── README.md
+The project follows a simple and organized layout:
+
+- The root folder contains the three main HTML pages: `index.html` (login page), `signup.html` (signup page), and `dashboard.html` (the main resume upload and analysis interface).
+- All styling lives in the `css/` folder.
+- JavaScript code is grouped inside the `js/` folder, which includes:
+  - `ai.js` → handles LLM API calls and response parsing
+  - `auth.js` → manages login and signup logic
+  - `config.js` → stores API provider settings and keys (you must edit this file with your own keys!)
+  - `main.js` → core app initialization and event handling
+  - `resume.js` → deals with file uploads and text extraction
+  - `ui.js` → renders feedback, analysis results, and UI updates
+- Configuration files include `.gitignore` (to protect sensitive files) and `README.md` (this file).
 
 
 ## Tech Used
