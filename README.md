@@ -71,19 +71,19 @@ This is currently frontend-only.
 ## Folder Structure 
 
 -  resumeReader/
-- ├── index.html          # Login page
-- ├── signup.html
-- ├── dashboard.html      # Upload + analysis page
-- ├── css/                # styles
-- ├── js/
-- │   ├── ai.js           # LLM calls & parsing
-- │   ├── auth.js         # login/signup
-- │   ├── config.js       # ← EDIT THIS with your keys!
-- │   ├── main.js         # app logic
-- │   ├── resume.js       # file handling
-- │   └── ui.js           # rendering
-- ├── .gitignore
-- └── README.md
+-     ├── index.html          # Login page
+-     ├── signup.html
+-     ├── dashboard.html      # Upload + analysis page
+-     ├── css/                # styles
+-     ├── js/
+-        │   ├── ai.js           # LLM calls & parsing
+-        │   ├── auth.js         # login/signup
+-        │   ├── config.js       # ← EDIT THIS with your keys!
+-        │   ├── main.js         # app logic
+-        │   ├── resume.js       # file handling
+-        │   └── ui.js           # rendering
+-     ├── .gitignore
+-     └── README.md
 
 
 ## Tech Used
